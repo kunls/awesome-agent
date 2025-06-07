@@ -186,6 +186,9 @@ class LLMService(LoggerMixin):
             str: 模型响应
         """
         try:
+            # 记录模型调用信息
+            tools_info = f"，工具数量: {len(tools) if tools else 0}" if tools else ""
+            self.logger.info(f"🔧 调用LLM: {model.upper()}{tools_info}，温度: {temperature}")
             # 构建请求参数
             messages = [{"role": "user", "content": prompt}]
             request_params = {
@@ -200,15 +203,20 @@ class LLMService(LoggerMixin):
                 request_params["tool_choice"] = tool_choice
             
             if model.lower() == "gpt":
+                # 使用GPT-4 Turbo，Function Calling能力更强
+                actual_model = "gpt-4-turbo-preview"
+                self.logger.info(f"📡 实际调用模型: {actual_model} (支持强化Function Calling)")
                 response = await self.openai_client.chat.completions.create(
-                    model="gpt-3.5-turbo",
+                    model=actual_model,
                     **request_params
                 )
                 return self._process_llm_response(response)
                 
             elif model.lower() == "deepseek":
+                actual_model = "deepseek-chat"
+                self.logger.debug(f"📡 实际调用模型: {actual_model}")
                 response = await self.deepseek_client.chat.completions.create(
-                    model="deepseek-chat",
+                    model=actual_model,
                     **request_params
                 )
                 return self._process_llm_response(response)

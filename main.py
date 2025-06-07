@@ -278,6 +278,137 @@ async def test_llm_connection(model: str = None):
         raise HTTPException(status_code=500, detail=f"LLM连接测试失败: {str(e)}")
 
 
+@app.get("/api/v1/test_reranker/{topic}")
+async def test_reranker(topic: str, max_results: int = 5):
+    """
+    测试Reranker RAG功能
+    """
+    try:
+        from app.services.reranker_service import RerankerService
+        from app.services.awesome_list_service import AwesomeListService
+        
+        # 先获取原始搜索结果
+        service = AwesomeListService()
+        search_results = await service.get_search_preview(topic, max_results)
+        
+        # 应用重排序
+        reranker_service = RerankerService()
+        reranked_results = await reranker_service.rerank_search_results(
+            search_results=search_results,
+            query=topic,
+            target_count=max_results
+        )
+        
+        return {
+            "topic": topic,
+            "original_results": [
+                {
+                    "title": r.title,
+                    "url": r.url,
+                    "original_score": r.score,
+                    "source": r.source
+                }
+                for r in search_results.results
+            ],
+            "reranked_results": [
+                {
+                    "title": r.title,
+                    "url": r.url,
+                    "reranked_score": r.score,
+                    "source": r.source
+                }
+                for r in reranked_results.results
+            ],
+            "reranking_applied": reranked_results.filters_applied.get("reranked", False),
+            "reranking_weights": reranked_results.filters_applied.get("reranking_weights", {}),
+            "processing_time": reranked_results.search_time
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Reranker测试失败: {str(e)}")
+
+
+@app.get("/api/v1/debug_function_calling/{topic}")
+async def debug_function_calling(topic: str):
+    """
+    调试Function Calling功能
+    """
+    try:
+        from app.services.intelligent_search_service import IntelligentSearchService
+        
+        service = IntelligentSearchService()
+        
+        # 直接调用搜索计划生成
+        search_plan = await service._generate_search_plan(
+            topic=topic,
+            language="zh",
+            model="deepseek"
+        )
+        
+        return {
+            "topic": topic,
+            "search_plan_count": len(search_plan),
+            "search_plan": search_plan,
+            "plan_details": [
+                {
+                    "query": plan.get("query", ""),
+                    "search_type": plan.get("search_type", ""),
+                    "max_results": plan.get("max_results", 0)
+                }
+                for plan in search_plan
+            ]
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Function Calling调试失败: {str(e)}")
+
+
+@app.get("/api/v1/test_model_calling/{topic}")
+async def test_model_calling(topic: str, model: str = "gpt"):
+    """
+    直接测试模型的Function Calling能力，不使用降级策略
+    """
+    try:
+        from app.services.intelligent_search_service import IntelligentSearchService
+        
+        service = IntelligentSearchService()
+        
+        # 直接调用搜索计划生成，不使用降级
+        search_plan = []
+        try:
+            search_plan = await service._generate_search_plan(
+                topic=topic,
+                language="zh",
+                model=model
+            )
+        except Exception as e:
+            return {
+                "error": str(e),
+                "topic": topic,
+                "model": model,
+                "search_plan_count": 0,
+                "message": "Function Calling失败"
+            }
+        
+        # 检查是否使用了降级策略
+        is_fallback = len(search_plan) == 4 and all(
+            plan.get("search_type") in ["arxiv_papers", "github_repos", "research_code", "huggingface_models"] 
+            for plan in search_plan
+        )
+        
+        return {
+            "topic": topic,
+            "model": model,
+            "search_plan_count": len(search_plan),
+            "is_fallback_strategy": is_fallback,
+            "plan_details": search_plan,
+            "success": len(search_plan) > 0 and not is_fallback
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"模型调用测试失败: {str(e)}")
+
+
 @app.get("/api/v1/academic_info")
 async def get_academic_info():
     """

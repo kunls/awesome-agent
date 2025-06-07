@@ -134,53 +134,53 @@ class IntelligentSearchService(LoggerMixin):
         """
         self.logger.info(f"让大模型分析主题并制定搜索策略: {topic}")
         
+        # 显示使用的模型
+        used_model = model or self.settings.default_llm_model
+        self.logger.info(f"🤖 使用模型: {used_model}")
+        
         # 构建提示词
         if language == "zh":
             prompt = f"""
 你是一个智能搜索助手。用户想要了解关于"{topic}"的相关资源。
 
-请分析这个主题，然后调用搜索工具来收集全面的信息。你应该：
+**重要：你必须使用search_web工具来搜索信息，不要只给文字回答。**
 
-1. 分析主题的不同方面和子领域
-2. 为每个重要方面设计具体的搜索查询
-3. 选择合适的搜索类型（通用、学术、代码、教程、工具）
-4. 并行调用多个搜索以获得全面的结果
+请按以下步骤操作：
+1. 分析"{topic}"主题的不同方面
+2. 立即调用search_web工具进行搜索
+3. 至少调用3-4次搜索，覆盖不同角度
 
-搜索类型说明：
-- arxiv_papers: arXiv论文搜索，获取最新研究论文
-- github_repos: GitHub代码库搜索，获取开源实现
-- huggingface_models: Hugging Face模型搜索，获取预训练模型
-- research_code: 研究代码搜索，获取论文配套代码
-- academic_datasets: 学术数据集搜索，获取研究数据
-- conference_papers: 会议论文搜索，获取顶级会议论文
+可用的搜索类型：
+- arxiv_papers: 搜索arXiv学术论文
+- github_repos: 搜索GitHub代码库
+- huggingface_models: 搜索Hugging Face模型
+- research_code: 搜索研究代码
+- academic_datasets: 搜索学术数据集
 
-请根据主题特点，调用3-5次搜索，覆盖学术研究的不同方面。
+现在请立即开始搜索：
 """
         else:
             prompt = f"""
 You are an intelligent search assistant. The user wants to learn about "{topic}".
 
-Please analyze this topic and call search tools to gather comprehensive information. You should:
+**IMPORTANT: You MUST use the search_web tool to search for information. Do not just provide text responses.**
 
-1. Analyze different aspects and subfields of the topic
-2. Design specific search queries for each important aspect
-3. Choose appropriate search types (general, academic, code, tutorial, tools)
-4. Make parallel search calls to get comprehensive results
+Please follow these steps:
+1. Analyze the different aspects of "{topic}"
+2. Immediately call the search_web tool to search
+3. Make at least 3-4 search calls covering different angles
 
-Search type descriptions:
-- arxiv_papers: arXiv paper search for latest research papers
-- github_repos: GitHub repository search for open source implementations
-- huggingface_models: Hugging Face model search for pre-trained models
-- research_code: Research code search for paper-associated code
-- academic_datasets: Academic dataset search for research data
-- conference_papers: Conference paper search for top-tier venue papers
+Available search types:
+- arxiv_papers: Search arXiv academic papers
+- github_repos: Search GitHub repositories
+- huggingface_models: Search Hugging Face models
+- research_code: Search research code
+- academic_datasets: Search academic datasets
 
-Based on the topic characteristics, please make 3-5 search calls covering different aspects of academic research.
+Now please start searching immediately:
 """
         
         try:
-            used_model = model or self.settings.default_llm_model
-            
             response = await self.llm_service._call_llm(
                 model=used_model,
                 prompt=prompt,
@@ -190,10 +190,19 @@ Based on the topic characteristics, please make 3-5 search calls covering differ
                 tool_choice="auto"
             )
             
+            self.logger.info(f"LLM完整响应: {response}")
+            
             # 解析工具调用
             search_calls = self._parse_tool_calls(response)
             
             self.logger.info(f"大模型制定了 {len(search_calls)} 个搜索计划")
+            
+            # 如果没有工具调用，记录详细信息
+            if len(search_calls) == 0:
+                self.logger.warning(f"大模型没有调用搜索工具，响应内容: {response[:500]}")
+                self.logger.info("将使用降级搜索策略")
+                return self._get_fallback_search_plan(topic)
+            
             return search_calls
             
         except Exception as e:
@@ -206,18 +215,49 @@ Based on the topic characteristics, please make 3-5 search calls covering differ
         解析LLM的工具调用响应
         """
         try:
+            self.logger.debug(f"解析工具调用响应: {response}")
+            
             # 尝试解析JSON格式的工具调用
-            if response.startswith("{"):
+            if response.strip().startswith("{"):
                 data = json.loads(response)
                 if "tool_calls" in data:
                     search_calls = []
                     for tool_call in data["tool_calls"]:
-                        if tool_call["function"]["name"] == "search_web":
-                            args = json.loads(tool_call["function"]["arguments"])
+                        if tool_call.get("function", {}).get("name") == "search_web":
+                            args_str = tool_call["function"]["arguments"]
+                            # 参数可能已经是字符串形式
+                            if isinstance(args_str, str):
+                                args = json.loads(args_str)
+                            else:
+                                args = args_str
                             search_calls.append(args)
                     return search_calls
             
-            # 如果不是工具调用格式，返回空列表
+            # 尝试查找文本中的工具调用模式
+            # 有时LLM可能会生成自然语言描述而不是严格的JSON
+            import re
+            
+            # 寻找search_web调用的模式
+            patterns = [
+                r'search_web\s*\(\s*query["\']?\s*:\s*["\']([^"\']+)["\']',
+                r'query["\']?\s*:\s*["\']([^"\']+)["\']',
+                r'搜索[：:]\s*["\']?([^"\']+)["\']?'
+            ]
+            
+            search_calls = []
+            for pattern in patterns:
+                matches = re.findall(pattern, response, re.IGNORECASE)
+                for match in matches:
+                    search_calls.append({
+                        "query": match.strip(),
+                        "search_type": "arxiv_papers",  # 默认类型
+                        "max_results": 3
+                    })
+            
+            if search_calls:
+                self.logger.info(f"通过正则表达式解析出 {len(search_calls)} 个搜索调用")
+                return search_calls[:5]  # 限制数量
+            
             return []
             
         except Exception as e:

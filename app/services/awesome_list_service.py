@@ -16,6 +16,7 @@ from app.models import (
 from app.services.search_service import SearchService
 from app.services.llm_service import LLMService
 from app.services.intelligent_search_service import IntelligentSearchService
+from app.services.reranker_service import RerankerService
 from app.utils import get_settings, get_logger, AwesomeAgentException, LoggerMixin
 
 
@@ -30,6 +31,7 @@ class AwesomeListService(LoggerMixin):
         self.search_service = SearchService()
         self.llm_service = LLMService()
         self.intelligent_search_service = IntelligentSearchService()
+        self.reranker_service = RerankerService()
     
     async def generate_awesome_list(
         self, 
@@ -62,6 +64,14 @@ class AwesomeListService(LoggerMixin):
                 max_results=request.max_results,
                 search_depth="basic",
                 academic_only=True
+            )
+            
+            # 第二步半：重排序优化
+            self.logger.info("步骤2.5: 应用Reranker RAG优化排序")
+            search_results = await self.reranker_service.rerank_search_results(
+                search_results=search_results,
+                query=request.topic,
+                target_count=request.max_results
             )
             
             # 如果搜索结果不足，使用扩展查询再次搜索
@@ -143,6 +153,14 @@ class AwesomeListService(LoggerMixin):
                 topic=request.topic,
                 language=request.language,
                 model=request.model
+            )
+            
+            # 第一步半：智能重排序
+            self.logger.info("步骤1.5: 应用Reranker RAG智能优化")
+            search_results = await self.reranker_service.rerank_search_results(
+                search_results=search_results,
+                query=request.topic,
+                target_count=request.max_results
             )
             
             # 如果智能搜索结果不足，补充传统搜索
@@ -373,7 +391,7 @@ class AwesomeListService(LoggerMixin):
         获取模型的显示名称
         """
         model_names = {
-            "gpt": "GPT-3.5-Turbo",
+            "gpt": "GPT-4-Turbo",  # 更新为GPT-4
             "deepseek": "DeepSeek-Chat"
         }
         
@@ -382,7 +400,7 @@ class AwesomeListService(LoggerMixin):
         
         # 使用默认模型
         default_model = self.settings.default_llm_model.lower()
-        return model_names.get(default_model, "GPT-3.5-Turbo")
+        return model_names.get(default_model, "GPT-4-Turbo")
     
     async def get_search_preview(self, topic: str, max_results: int = 5) -> SearchResults:
         """
