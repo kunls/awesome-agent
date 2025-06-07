@@ -286,10 +286,11 @@ async def get_academic_info():
     return {
         "mode": "Academic Research Mode",
         "description": "专为科研和学术领域优化的Awesome List生成器",
-        "search_domains": ["arxiv.org", "github.com"],
+        "search_domains": ["arxiv.org", "github.com", "huggingface.co"],
         "search_types": [
             "arxiv_papers - arXiv论文搜索",
             "github_repos - GitHub代码库搜索", 
+            "huggingface_models - Hugging Face模型搜索",
             "research_code - 研究代码搜索",
             "academic_datasets - 学术数据集搜索",
             "conference_papers - 会议论文搜索"
