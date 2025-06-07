@@ -442,6 +442,73 @@ async def get_academic_info():
     }
 
 
+@app.post("/api/v1/save_markdown")
+async def save_markdown(request: dict):
+    """
+    保存Awesome List为本地markdown文件
+    """
+    try:
+        topic = request.get("topic", "awesome-list")
+        content = request.get("content", "")
+        
+        if not content:
+            raise HTTPException(status_code=400, detail="内容不能为空")
+        
+        # 清理文件名，移除特殊字符
+        import re
+        safe_filename = re.sub(r'[^\w\s-]', '', topic.strip())
+        safe_filename = re.sub(r'[-\s]+', '-', safe_filename)
+        filename = f"awesome-{safe_filename.lower()}.md"
+        
+        # 保存到当前目录
+        filepath = f"./{filename}"
+        
+        with open(filepath, 'w', encoding='utf-8') as f:
+            f.write(content)
+        
+        return {
+            "success": True,
+            "message": f"文件已保存",
+            "filename": filename,
+            "filepath": filepath,
+            "size": len(content)
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"保存文件失败: {str(e)}")
+
+
+@app.post("/api/v1/generate_and_save")
+async def generate_and_save(request: GenerateAwesomeListRequest):
+    """
+    生成Awesome List并自动保存为本地文件
+    """
+    try:
+        # 生成Awesome List
+        result = await awesome_list_service.generate_awesome_list_intelligent(request)
+        
+        # 保存到本地文件
+        import re
+        safe_filename = re.sub(r'[^\w\s-]', '', request.topic.strip())
+        safe_filename = re.sub(r'[-\s]+', '-', safe_filename)
+        filename = f"awesome-{safe_filename.lower()}.md"
+        filepath = f"./{filename}"
+        
+        with open(filepath, 'w', encoding='utf-8') as f:
+            f.write(result.awesome_list)
+        
+        return {
+            **result.dict(),
+            "saved_to_file": True,
+            "filename": filename,
+            "filepath": filepath
+        }
+        
+    except Exception as e:
+        logger.error(f"生成并保存失败: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"生成并保存失败: {str(e)}")
+
+
 if __name__ == "__main__":
     import uvicorn
     
