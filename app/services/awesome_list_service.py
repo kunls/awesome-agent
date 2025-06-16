@@ -39,7 +39,7 @@ class AwesomeListService(LoggerMixin):
     ) -> GenerateAwesomeListResponse:
         """
         生成完整的Awesome List（传统搜索模式）
-        流程：直接搜索用户关键词 → LLM整理成list
+        流程：直接搜索用户关键词 → 基于规则重排序 → LLM整理成list
         
         Args:
             request: 生成请求
@@ -61,13 +61,14 @@ class AwesomeListService(LoggerMixin):
             )
             self.logger.info(f"✅ 搜索完成，找到 {len(search_results.results)} 个结果")
 
-            # 步骤2：重排序优化
-            self.logger.info(f"📍 步骤2/3: 应用重排序优化 (评分方法: {request.scoring_method})")
+            # 步骤2：基于规则的重排序优化（传统搜索默认使用规则评估）
+            scoring_method = request.scoring_method or "rule_based"
+            self.logger.info(f"📍 步骤2/3: 应用重排序优化 (评分方法: {scoring_method})")
             search_results = await self.reranker_service.rerank_search_results(
                 search_results=search_results,
                 query=request.topic,
                 target_count=request.max_results,
-                scoring_method=request.scoring_method
+                scoring_method=scoring_method
             )
             
             # 步骤3：LLM整理成Awesome List
@@ -93,7 +94,8 @@ class AwesomeListService(LoggerMixin):
                 f"🎉 传统搜索模式完成！"
                 f"总耗时: {processing_time:.2f}s，"
                 f"搜索结果: {search_results.total_count}个，"
-                f"关键词: {len(keywords)}个"
+                f"关键词: {len(keywords)}个，"
+                f"评分方法: {scoring_method}"
             )
             
             return GenerateAwesomeListResponse(
@@ -114,7 +116,7 @@ class AwesomeListService(LoggerMixin):
     ) -> GenerateAwesomeListResponse:
         """
         智能生成Awesome List（智能搜索模式）
-        流程：LLM扩展主题 → Function Calling搜索各个扩展主题 → 整理成list
+        流程：LLM扩展主题 → Function Calling搜索各个扩展主题 → 基于LLM重排序 → 整理成list
         
         Args:
             request: 生成请求
@@ -144,13 +146,14 @@ class AwesomeListService(LoggerMixin):
             )
             self.logger.info(f"✅ 智能搜索完成，找到 {len(search_results.results)} 个结果")
 
-            # 步骤3：重排序优化
-            self.logger.info(f"📍 步骤3/4: 应用重排序优化 (评分方法: {request.scoring_method})")
+            # 步骤3：基于LLM的智能重排序优化（智能搜索默认使用LLM评估）
+            scoring_method = request.scoring_method or "llm_based"
+            self.logger.info(f"📍 步骤3/4: 应用智能重排序优化 (评分方法: {scoring_method})")
             search_results = await self.reranker_service.rerank_search_results(
                 search_results=search_results,
                 query=request.topic,
                 target_count=request.max_results,
-                scoring_method=request.scoring_method
+                scoring_method=scoring_method
             )
             
             # 步骤4：LLM整理成Awesome List
@@ -185,7 +188,8 @@ class AwesomeListService(LoggerMixin):
                 f"🎉 智能搜索模式完成！"
                 f"总耗时: {processing_time:.2f}s，"
                 f"搜索结果: {search_results.total_count}个，"
-                f"关键词: {len(keywords)}个"
+                f"关键词: {len(keywords)}个，"
+                f"评分方法: {scoring_method}"
             )
             
             return GenerateAwesomeListResponse(

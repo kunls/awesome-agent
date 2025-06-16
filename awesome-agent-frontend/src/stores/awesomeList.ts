@@ -20,6 +20,7 @@ export interface GenerateRequest {
   maxResults: number
   language: string
   searchMode?: string  // 添加搜索模式参数
+  scoringMethod?: string  // 添加评分方式参数
 }
 
 export const useAwesomeListStore = defineStore('awesomeList', () => {
@@ -42,12 +43,17 @@ export const useAwesomeListStore = defineStore('awesomeList', () => {
     try {
       appStore.setLoading(true, '正在连接AI模型...')
       
-      // 根据搜索模式选择API接口
+      // 根据搜索模式选择API接口和评分方式
       const apiEndpoint = request.searchMode === 'traditional' 
         ? '/api/v1/generate_awesome_list'  // 传统搜索
         : '/api/v1/generate_awesome_list_intelligent'  // 智能搜索（默认）
       
-      console.log(`使用 ${request.searchMode === 'traditional' ? '传统搜索' : '智能搜索'} 模式，调用接口: ${apiEndpoint}`)
+      // 根据搜索模式自动选择评分方式（如果未指定）
+      const scoringMethod = request.scoringMethod || (
+        request.searchMode === 'traditional' ? 'rule_based' : 'llm_based'
+      )
+      
+      console.log(`使用 ${request.searchMode === 'traditional' ? '传统搜索' : '智能搜索'} 模式，调用接口: ${apiEndpoint}，评分方式: ${scoringMethod}`)
       
       const response = await axios.post(
         `${appStore.config.apiBaseUrl}${apiEndpoint}`,
@@ -55,7 +61,8 @@ export const useAwesomeListStore = defineStore('awesomeList', () => {
           topic: request.topic,
           model: request.model,
           max_results: request.maxResults,
-          language: request.language
+          language: request.language,
+          scoring_method: scoringMethod
         }
       )
 

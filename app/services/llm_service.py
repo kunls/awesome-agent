@@ -160,15 +160,55 @@ class LLMService(LoggerMixin):
                 temperature=0.1
             )
 
-            # 简单解析关键词
+            # 智能解析关键词
             import json
+            import re
+            
+            self.logger.debug(f"关键词提取原始响应: {response}")
+            
             try:
+                # 尝试直接解析 JSON
                 parsed = json.loads(response)
-                return parsed.get("keywords", [])[:max_keywords]
+                keywords = parsed.get("keywords", [])
+                self.logger.info(f"成功解析JSON格式关键词: {keywords}")
+                return keywords[:max_keywords]
             except json.JSONDecodeError:
-                # 如果JSON解析失败，使用简单的文本分割
-                keywords = [word.strip().strip('"\'')
-                            for word in response.split('\n') if word.strip()]
+                self.logger.debug("JSON解析失败，尝试提取JSON内容")
+                
+                # 尝试提取 JSON 代码块
+                json_match = re.search(r'```json\s*(\{.*?\})\s*```', response, re.DOTALL)
+                if json_match:
+                    try:
+                        parsed = json.loads(json_match.group(1))
+                        keywords = parsed.get("keywords", [])
+                        self.logger.info(f"从代码块中解析关键词: {keywords}")
+                        return keywords[:max_keywords]
+                    except json.JSONDecodeError:
+                        pass
+                
+                # 尝试寻找数组格式
+                array_match = re.search(r'\["([^"]+)"(?:,\s*"([^"]+)")*\]', response)
+                if array_match:
+                    # 从正则匹配中提取所有关键词
+                    keywords = re.findall(r'"([^"]+)"', array_match.group(0))
+                    self.logger.info(f"从数组格式中解析关键词: {keywords}")
+                    return keywords[:max_keywords]
+                
+                # 最后的兜底方案：简单的文本分割，过滤掉JSON格式标记
+                lines = response.split('\n')
+                keywords = []
+                for line in lines:
+                    line = line.strip()
+                    # 过滤掉JSON格式标记
+                    if line and not line.startswith('{') and not line.startswith('}') and \
+                       not line.startswith('```') and not line.startswith('"keywords"') and \
+                       not line == '[' and not line == ']':
+                        # 清理引号和逗号
+                        clean_word = line.strip('",\'').strip()
+                        if clean_word and len(clean_word) > 1:
+                            keywords.append(clean_word)
+                
+                self.logger.warning(f"使用文本分割提取关键词: {keywords}")
                 return keywords[:max_keywords]
 
         except Exception as e:

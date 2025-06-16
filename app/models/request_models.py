@@ -29,6 +29,7 @@ class GenerateAwesomeListRequest(BaseModel):
     
     max_results: Optional[int] = Field(
         default=10,
+        alias="maxResults",  # 支持前端的驼峰式命名
         description="搜索结果的最大数量",
         ge=1,
         le=50,
@@ -51,6 +52,7 @@ class GenerateAwesomeListRequest(BaseModel):
 
     class Config:
         """Pydantic配置"""
+        populate_by_name = True  # 允许使用字段名和别名
         json_schema_extra = {
             "example": {
                 "topic": "Vue.js 前端开发",

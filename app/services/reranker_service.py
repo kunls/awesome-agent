@@ -733,9 +733,9 @@ class RerankerService(LoggerMixin):
         try:
             prompt = self._build_llm_scoring_prompt(results, query)
             
-            # 调用大模型进行评分
+            # 调用大模型进行评分，使用系统默认模型保持一致性
             response = await self.llm_service._call_llm(
-                model="gpt-4o-mini",  # 使用较快的模型进行评分
+                model=self.llm_service.settings.default_llm_model,
                 prompt=prompt,
                 max_tokens=2000,
                 temperature=0.1  # 低温度确保评分一致性
@@ -897,7 +897,7 @@ class RerankerService(LoggerMixin):
                         utility_score=score_data.get("utility_score", 0.5),
                         reasoning=score_data.get("reasoning", "无详细说明"),
                         details={
-                            "llm_model": "gpt-4o-mini",
+                            "llm_model": self.llm_service.settings.default_llm_model,
                             "weights_used": self.llm_weights
                         }
                     )
