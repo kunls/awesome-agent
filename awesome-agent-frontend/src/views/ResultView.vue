@@ -167,8 +167,8 @@ const topic = computed(() => {
   if (route.query.topic) {
     return route.query.topic as string
   }
-  if (result.value?.topic) {
-    return result.value.topic
+  if (props.result?.topic) {
+    return props.result.topic
   }
   return '未知主题'
 })
@@ -197,65 +197,141 @@ const displayKeywords = computed(() => {
   if (typeof result.value.keywords === 'string') {
     const rawKeywords = result.value.keywords.trim()
     
-    // 移除可能的代码块标记
-    const cleanKeywords = rawKeywords
-      .replace(/```json\s*/g, '')
-      .replace(/```\s*/g, '')
-      .replace(/^json\s*/g, '')
+    // 移除各种格式标记和包装
+    let cleanKeywords = rawKeywords
+      .replace(/```json\s*/g, '')  // 移除 ```json
+      .replace(/```\s*/g, '')      // 移除 ```
+      .replace(/^json\s*/gi, '')   // 移除开头的 json
+      .replace(/`/g, '')           // 移除反引号
       .trim()
     
+    // 处理多种可能的格式
     try {
-      // 尝试解析JSON
-      const parsed = JSON.parse(cleanKeywords)
-      if (Array.isArray(parsed)) {
-        keywordsArray = parsed
-      }
-    } catch {
-      // 如果解析失败，尝试其他方式
+      // 1. 尝试直接解析JSON数组格式
       if (cleanKeywords.startsWith('[') && cleanKeywords.endsWith(']')) {
-        try {
-          // 尝试解析类似 ["关键词1", "关键词2"] 的格式
-          const parsed = JSON.parse(cleanKeywords)
-          if (Array.isArray(parsed)) {
-            keywordsArray = parsed
-          }
-        } catch {
-                     // 如果还是失败，手动提取引号内的内容
-           const matches = cleanKeywords.match(/"([^"]+)"/g)
-           if (matches) {
-             keywordsArray = matches.map((match: string) => match.replace(/"/g, ''))
-           }
+        const parsed = JSON.parse(cleanKeywords)
+        if (Array.isArray(parsed)) {
+          keywordsArray = parsed.map((k: any) => String(k).trim()).filter((k: string) => k)
         }
-      } else {
-                 // 按逗号分割处理
-         keywordsArray = cleanKeywords
-           .split(',')
-           .map((k: string) => k.trim())
-           .filter((k: string) => k.length > 0)
       }
+      // 2. 尝试解析JSON对象格式 {"keywords": [...]}
+      else if (cleanKeywords.startsWith('{') && cleanKeywords.includes('keywords')) {
+        const parsed = JSON.parse(cleanKeywords)
+        if (parsed.keywords && Array.isArray(parsed.keywords)) {
+          keywordsArray = parsed.keywords.map((k: any) => String(k).trim()).filter((k: string) => k)
+        }
+      }
+      // 3. 如果包含多个JSON对象或混合格式，尝试提取
+      else if (cleanKeywords.includes('{') || cleanKeywords.includes('[')) {
+        // 提取所有JSON数组
+        const jsonArrayMatches = cleanKeywords.match(/\[([^\]]*)\]/g)
+        if (jsonArrayMatches) {
+          for (const match of jsonArrayMatches) {
+            try {
+              const parsed = JSON.parse(match)
+              if (Array.isArray(parsed)) {
+                keywordsArray.push(...parsed.map((k: any) => String(k).trim()).filter((k: string) => k))
+              }
+            } catch (e) {
+              // 忽略解析失败的数组
+            }
+          }
+        }
+        
+        // 提取JSON对象中的keywords字段
+        const jsonObjectMatches = cleanKeywords.match(/\{[^}]*"keywords"[^}]*\}/g)
+        if (jsonObjectMatches) {
+          for (const match of jsonObjectMatches) {
+            try {
+              const parsed = JSON.parse(match)
+              if (parsed.keywords && Array.isArray(parsed.keywords)) {
+                keywordsArray.push(...parsed.keywords.map((k: any) => String(k).trim()).filter((k: string) => k))
+              }
+            } catch (e) {
+              // 忽略解析失败的对象
+            }
+          }
+        }
+        
+        // 如果上述方法都没找到关键词，尝试手动提取引号内容
+        if (keywordsArray.length === 0) {
+          const quotedMatches = cleanKeywords.match(/"([^"]+)"/g)
+          if (quotedMatches) {
+            keywordsArray = quotedMatches.map((match: string) => match.replace(/"/g, '').trim()).filter((k: string) => k)
+          }
+        }
+      }
+      // 4. 按行分割处理（处理换行分隔的关键词）
+      else {
+        const lines = cleanKeywords.split('\n').map((line: string) => line.trim()).filter((line: string) => line)
+        for (const line of lines) {
+          // 移除列表标记
+          const cleanLine = line.replace(/^[-*+]\s*/, '').trim()
+          if (cleanLine) {
+            keywordsArray.push(cleanLine)
+          }
+        }
+        
+        // 如果没有找到换行，尝试逗号分割
+        if (keywordsArray.length === 0) {
+          keywordsArray = cleanKeywords
+            .split(',')
+            .map((k: string) => k.trim())
+            .filter((k: string) => k.length > 0)
+        }
+      }
+    } catch (e) {
+      console.warn('关键词解析失败，使用后备方案:', e)
+      // 后备方案：按行和逗号分割
+      const lines = cleanKeywords.split(/[\n,]/).map((line: string) => line.trim()).filter((line: string) => line)
+      keywordsArray = lines.map((line: string) => line.replace(/^[-*+]\s*/, '').trim()).filter((k: string) => k)
     }
   }
   
   // 如果已经是数组
   if (Array.isArray(result.value.keywords)) {
-    keywordsArray = result.value.keywords
+    keywordsArray = result.value.keywords.map((k: any) => String(k).trim()).filter((k: string) => k)
   }
   
-  // 过滤和清理关键词
+  // 增强的过滤和清理逻辑
   return keywordsArray
     .filter(keyword => {
       if (typeof keyword !== 'string') return false
       const cleaned = keyword.trim()
-      // 过滤掉空字符串、纯符号、过短或过长的词
+      
+      // 过滤掉空字符串、过短或过长的词
       if (cleaned.length < 1 || cleaned.length > 50) return false
-      // 过滤掉看起来像代码或格式的内容
-      if (/^[{}\[\]"'`,;:]*$/.test(cleaned)) return false
-      if (/^(json|markdown|code|html|css|js)$/i.test(cleaned)) return false
+      
+      // 过滤掉纯符号和格式标记
+      if (/^[{}\[\]"'`,;:\s]*$/.test(cleaned)) return false
+      
+      // 过滤掉代码相关词汇
+      if (/^(json|markdown|code|html|css|js|xml|yaml|sql)$/i.test(cleaned)) return false
+      
+      // 过滤掉看起来像技术格式的内容
+      if (/^[\w-]+:\/\//.test(cleaned)) return false  // URL
+      if (/^\{\s*"/.test(cleaned)) return false       // JSON对象开头
+      if (/^```/.test(cleaned)) return false          // 代码块标记
+      
+      // 过滤掉重复的标点符号
+      if (/^[.,:;!?]{2,}$/.test(cleaned)) return false
+      
       return true
     })
-    .map(keyword => keyword.trim())
-    // 去重
-    .filter((keyword, index, array) => array.indexOf(keyword) === index)
+    .map(keyword => {
+      // 清理关键词
+      return keyword
+        .trim()
+        .replace(/^[-*+]\s*/, '')  // 移除列表标记
+        .replace(/["""'']/g, '')   // 移除各种引号
+        .replace(/^(\w+):?\s*/, '$1') // 清理冒号
+        .trim()
+    })
+    .filter(keyword => keyword.length > 0) // 再次过滤空字符串
+    // 去重（忽略大小写）
+    .filter((keyword, index, array) => 
+      array.findIndex((k: string) => k.toLowerCase() === keyword.toLowerCase()) === index
+    )
     // 限制数量，避免显示过多关键词
     .slice(0, 10)
 })

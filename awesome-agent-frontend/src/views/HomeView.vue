@@ -183,12 +183,31 @@ const searchMode = ref('traditional')
 const isGenerating = ref(false)
 const result = ref(null)
 
-const progress = reactive([
-  { title: '主题扩展', description: '分析搜索主题，生成相关关键词', status: 'pending' },
-  { title: '资源搜索', description: '在 arXiv、GitHub 等平台搜索相关资源', status: 'pending' },
-  { title: '内容筛选', description: '智能筛选和排序搜索结果', status: 'pending' },
-  { title: '列表生成', description: '生成结构化的 Awesome List', status: 'pending' }
-])
+// 进度步骤 - 根据搜索模式动态调整
+const getProgressSteps = (mode: string) => {
+  if (mode === 'traditional') {
+    return [
+      { title: '直接搜索', description: '搜索用户输入的关键词', status: 'pending' },
+      { title: '结果排序', description: '智能筛选和排序搜索结果', status: 'pending' },
+      { title: '内容整理', description: '生成结构化的 Awesome List', status: 'pending' }
+    ]
+  } else {
+    return [
+      { title: '主题扩展', description: 'AI分析搜索主题，生成相关关键词', status: 'pending' },
+      { title: '智能搜索', description: '在 arXiv、GitHub 等平台搜索相关资源', status: 'pending' },
+      { title: '内容筛选', description: '智能筛选和排序搜索结果', status: 'pending' },
+      { title: '列表生成', description: '生成结构化的 Awesome List', status: 'pending' }
+    ]
+  }
+}
+
+const progress = reactive(getProgressSteps('traditional'))
+
+// 更新进度步骤
+const updateProgressSteps = () => {
+  const newSteps = getProgressSteps(searchMode.value)
+  progress.splice(0, progress.length, ...newSteps)
+}
 
 const examples = [
   {
@@ -241,36 +260,38 @@ const handleSearch = async () => {
 
   isGenerating.value = true
   result.value = null
+  
+  // 根据搜索模式更新进度步骤
+  updateProgressSteps()
   resetProgress()
 
   try {
-    // Update progress steps
-    updateProgress(0, 'processing')
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    updateProgress(0, 'completed')
+    // 根据搜索模式调整进度更新
+    const stepCount = searchMode.value === 'traditional' ? 3 : 4
+    const stepDurations = searchMode.value === 'traditional' 
+      ? [2000, 1500, 2000]  // 传统模式：3步
+      : [1000, 2000, 1500, 2000]  // 智能模式：4步
 
-    updateProgress(1, 'processing')
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    updateProgress(1, 'completed')
-
-    updateProgress(2, 'processing')
-    await new Promise(resolve => setTimeout(resolve, 1500))
-    updateProgress(2, 'completed')
-
-    updateProgress(3, 'processing')
+    // 逐步更新进度
+    for (let i = 0; i < stepCount; i++) {
+      updateProgress(i, 'processing')
+      await new Promise(resolve => setTimeout(resolve, stepDurations[i]))
+      updateProgress(i, 'completed')
+    }
     
          // Call the API
      const requestData = {
        topic: searchQuery.value.trim(),
        model: selectedModel.value,
        language: selectedLanguage.value,
-       maxResults: maxResults.value
+       maxResults: maxResults.value,
+       searchMode: searchMode.value
      }
 
-     const response = await store.generateAwesomeList(requestData)
-     
-     updateProgress(3, 'completed')
-     result.value = response as any
+         console.log('发送请求:', requestData)
+    const response = await store.generateAwesomeList(requestData)
+    
+    result.value = response as any
 
     // Navigate to results
     router.push({
@@ -306,6 +327,14 @@ watch(
       searchQuery.value = newSearch
       handleSearch()
     }
+  }
+)
+
+// Watch for search mode changes and update progress steps
+watch(
+  () => searchMode.value,
+  () => {
+    updateProgressSteps()
   }
 )
 </script>

@@ -19,6 +19,7 @@ export interface GenerateRequest {
   model: string
   maxResults: number
   language: string
+  searchMode?: string  // 添加搜索模式参数
 }
 
 export const useAwesomeListStore = defineStore('awesomeList', () => {
@@ -41,8 +42,15 @@ export const useAwesomeListStore = defineStore('awesomeList', () => {
     try {
       appStore.setLoading(true, '正在连接AI模型...')
       
+      // 根据搜索模式选择API接口
+      const apiEndpoint = request.searchMode === 'traditional' 
+        ? '/api/v1/generate_awesome_list'  // 传统搜索
+        : '/api/v1/generate_awesome_list_intelligent'  // 智能搜索（默认）
+      
+      console.log(`使用 ${request.searchMode === 'traditional' ? '传统搜索' : '智能搜索'} 模式，调用接口: ${apiEndpoint}`)
+      
       const response = await axios.post(
-        `${appStore.config.apiBaseUrl}/api/v1/generate_awesome_list_intelligent`,
+        `${appStore.config.apiBaseUrl}${apiEndpoint}`,
         {
           topic: request.topic,
           model: request.model,
@@ -73,6 +81,8 @@ export const useAwesomeListStore = defineStore('awesomeList', () => {
     } catch (error) {
       console.error('生成失败:', error)
       throw error
+    } finally {
+      appStore.setLoading(false)
     }
   }
 
