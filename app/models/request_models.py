@@ -41,6 +41,13 @@ class GenerateAwesomeListRequest(BaseModel):
         pattern="^(zh|en)$",
         example="zh"
     )
+    
+    scoring_method: Optional[str] = Field(
+        default="rule_based",
+        description="重排序评分方法 (rule_based: 基于规则, llm_based: 基于大模型)",
+        pattern="^(rule_based|llm_based)$",
+        example="rule_based"
+    )
 
     class Config:
         """Pydantic配置"""
@@ -49,6 +56,7 @@ class GenerateAwesomeListRequest(BaseModel):
                 "topic": "Vue.js 前端开发",
                 "model": "gpt",
                 "max_results": 15,
-                "language": "zh"
+                "language": "zh",
+                "scoring_method": "rule_based"
             }
         } 

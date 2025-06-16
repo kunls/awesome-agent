@@ -279,11 +279,27 @@ async def test_llm_connection(model: str = None):
 
 
 @app.get("/api/v1/test_reranker/{topic}")
-async def test_reranker(topic: str, max_results: int = 5):
+async def test_reranker(
+    topic: str, 
+    max_results: int = 5,
+    scoring_method: str = "rule_based"
+):
     """
     测试Reranker RAG功能
+    
+    Args:
+        topic: 搜索主题
+        max_results: 最大结果数量 
+        scoring_method: 评分方法 ("rule_based" 或 "llm_based")
     """
     try:
+        # 验证scoring_method参数
+        if scoring_method not in ["rule_based", "llm_based"]:
+            raise HTTPException(
+                status_code=400, 
+                detail="scoring_method必须是'rule_based'或'llm_based'"
+            )
+        
         from app.services.reranker_service import RerankerService
         from app.services.awesome_list_service import AwesomeListService
         
@@ -296,11 +312,13 @@ async def test_reranker(topic: str, max_results: int = 5):
         reranked_results = await reranker_service.rerank_search_results(
             search_results=search_results,
             query=topic,
-            target_count=max_results
+            target_count=max_results,
+            scoring_method=scoring_method
         )
         
         return {
             "topic": topic,
+            "scoring_method": scoring_method,
             "original_results": [
                 {
                     "title": r.title,
@@ -320,8 +338,18 @@ async def test_reranker(topic: str, max_results: int = 5):
                 for r in reranked_results.results
             ],
             "reranking_applied": reranked_results.filters_applied.get("reranked", False),
+            "scoring_method_used": reranked_results.filters_applied.get("scoring_method", "rule_based"),
             "reranking_weights": reranked_results.filters_applied.get("reranking_weights", {}),
-            "processing_time": reranked_results.search_time
+            "processing_time": reranked_results.search_time,
+            "score_changes": [
+                {
+                    "title": orig.title,
+                    "original_score": orig.score,
+                    "reranked_score": reranked.score,
+                    "change": reranked.score - orig.score
+                }
+                for orig, reranked in zip(search_results.results, reranked_results.results)
+            ]
         }
         
     except Exception as e:
@@ -428,7 +456,7 @@ async def get_academic_info():
         ],
         "features": [
             "Function Calling智能搜索策略",
-            "多模型支持 (GPT-3.5-Turbo, DeepSeek)",
+            "多模型支持 (GPT-4-Turbo, DeepSeek)",
             "学术资源优先级排序",
             "自动关键词提取",
             "中英文双语支持"

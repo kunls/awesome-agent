@@ -1,0 +1,294 @@
+<html>
+  <head>
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
+    <link
+      rel="stylesheet"
+      as="style"
+      onload="this.rel='stylesheet'"
+      href="https://fonts.googleapis.com/css2?display=swap&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900&amp;family=Work+Sans%3Awght%40400%3B500%3B700%3B900"
+    />
+
+    <title>Stitch Design</title>
+    <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  </head>
+  <body>
+    <div class="relative flex size-full min-h-screen flex-col bg-white group/design-root overflow-x-hidden" style='font-family: "Work Sans", "Noto Sans", sans-serif;'>
+      <div class="layout-container flex h-full grow flex-col">
+        <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#f0f2f5] px-10 py-3">
+          <div class="flex items-center gap-8">
+            <div class="flex items-center gap-4 text-[#111418]">
+              <div class="size-4">
+                <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <g clip-path="url(#clip0_6_330)">
+                    <path
+                      fill-rule="evenodd"
+                      clip-rule="evenodd"
+                      d="M24 0.757355L47.2426 24L24 47.2426L0.757355 24L24 0.757355ZM21 35.7574V12.2426L9.24264 24L21 35.7574Z"
+                      fill="currentColor"
+                    ></path>
+                  </g>
+                  <defs>
+                    <clipPath id="clip0_6_330"><rect width="48" height="48" fill="white"></rect></clipPath>
+                  </defs>
+                </svg>
+              </div>
+              <h2 class="text-[#111418] text-lg font-bold leading-tight tracking-[-0.015em]">Awesome List Agent</h2>
+            </div>
+            <div class="flex items-center gap-9">
+              <a class="text-[#111418] text-sm font-medium leading-normal" href="#">Home</a>
+              <a class="text-[#111418] text-sm font-medium leading-normal" href="#">Topics</a>
+              <a class="text-[#111418] text-sm font-medium leading-normal" href="#">About</a>
+            </div>
+          </div>
+          <div class="flex flex-1 justify-end gap-8">
+            <label class="flex flex-col min-w-40 !h-10 max-w-64">
+              <div class="flex w-full flex-1 items-stretch rounded-lg h-full">
+                <div
+                  class="text-[#60758a] flex border-none bg-[#f0f2f5] items-center justify-center pl-4 rounded-l-lg border-r-0"
+                  data-icon="MagnifyingGlass"
+                  data-size="24px"
+                  data-weight="regular"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                    <path
+                      d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"
+                    ></path>
+                  </svg>
+                </div>
+                <input
+                  placeholder="Search"
+                  class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border-none bg-[#f0f2f5] focus:border-none h-full placeholder:text-[#60758a] px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal"
+                  value=""
+                />
+              </div>
+            </label>
+            <button
+              class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 bg-[#f0f2f5] text-[#111418] gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-2.5"
+            >
+              <div class="text-[#111418]" data-icon="Bell" data-size="20px" data-weight="regular">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" viewBox="0 0 256 256">
+                  <path
+                    d="M221.8,175.94C216.25,166.38,208,139.33,208,104a80,80,0,1,0-160,0c0,35.34-8.26,62.38-13.81,71.94A16,16,0,0,0,48,200H88.81a40,40,0,0,0,78.38,0H208a16,16,0,0,0,13.8-24.06ZM128,216a24,24,0,0,1-22.62-16h45.24A24,24,0,0,1,128,216ZM48,184c7.7-13.24,16-43.92,16-80a64,64,0,1,1,128,0c0,36.05,8.28,66.73,16,80Z"
+                  ></path>
+                </svg>
+              </div>
+            </button>
+            <div
+              class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10"
+              style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCv5utuvl39cmNZse-nH53E3qz5Wmv7Ec8j9ROyIg9fzUYUKe_K0l8lQXfSLdgh62BKn-_GYwdhvh9hPDbbkMlYaPpizK25e0va-mZDOK6Xt52BbEd4EXS-oy7SnXYpuIMdoEInQ3S56wXrQEGUSVCyVYjCe6qLg7jO4B9VZYPZkWL-RnYb5xltX19ze_Vk41fRXTsdVi_hPRS0U4-Ko6nYzf2I895oNTcVkdJXQoNHzr7LSiqVt7WBDlATkYtGp5ahtilYDsziwA");'
+            ></div>
+          </div>
+        </header>
+        <div class="px-40 flex flex-1 justify-center py-5">
+          <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
+            <div class="flex flex-wrap gap-2 p-4">
+              <a class="text-[#60758a] text-base font-medium leading-normal" href="#">Topics</a>
+              <span class="text-[#60758a] text-base font-medium leading-normal">/</span>
+              <span class="text-[#111418] text-base font-medium leading-normal">Machine Learning</span>
+            </div>
+            <div class="flex flex-wrap justify-between gap-3 p-4">
+              <div class="flex min-w-72 flex-col gap-3">
+                <p class="text-[#111418] tracking-light text-[32px] font-bold leading-tight">Machine Learning</p>
+                <p class="text-[#60758a] text-sm font-normal leading-normal">A curated list of awesome Machine Learning frameworks, libraries and software.</p>
+              </div>
+            </div>
+            <h2 class="text-[#111418] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Frameworks</h2>
+            <div class="flex gap-4 bg-white px-4 py-3">
+              <div class="text-[#111418] flex items-center justify-center rounded-lg bg-[#f0f2f5] shrink-0 size-12" data-icon="Code" data-size="24px" data-weight="regular">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                  <path
+                    d="M69.12,94.15,28.5,128l40.62,33.85a8,8,0,1,1-10.24,12.29l-48-40a8,8,0,0,1,0-12.29l48-40a8,8,0,0,1,10.24,12.3Zm176,27.7-48-40a8,8,0,1,0-10.24,12.3L227.5,128l-40.62,33.85a8,8,0,1,0,10.24,12.29l48-40a8,8,0,0,0,0-12.29ZM162.73,32.48a8,8,0,0,0-10.25,4.79l-64,176a8,8,0,0,0,4.79,10.26A8.14,8.14,0,0,0,96,224a8,8,0,0,0,7.52-5.27l64-176A8,8,0,0,0,162.73,32.48Z"
+                  ></path>
+                </svg>
+              </div>
+              <div class="flex flex-1 flex-col justify-center">
+                <p class="text-[#111418] text-base font-medium leading-normal">MLib</p>
+                <p class="text-[#60758a] text-sm font-normal leading-normal">Python</p>
+                <p class="text-[#60758a] text-sm font-normal leading-normal">
+                  A comprehensive library for machine learning, offering a wide range of algorithms and tools for building and training models.
+                </p>
+              </div>
+            </div>
+            <div class="flex gap-4 bg-white px-4 py-3">
+              <div class="text-[#111418] flex items-center justify-center rounded-lg bg-[#f0f2f5] shrink-0 size-12" data-icon="Code" data-size="24px" data-weight="regular">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                  <path
+                    d="M69.12,94.15,28.5,128l40.62,33.85a8,8,0,1,1-10.24,12.29l-48-40a8,8,0,0,1,0-12.29l48-40a8,8,0,0,1,10.24,12.3Zm176,27.7-48-40a8,8,0,1,0-10.24,12.3L227.5,128l-40.62,33.85a8,8,0,1,0,10.24,12.29l48-40a8,8,0,0,0,0-12.29ZM162.73,32.48a8,8,0,0,0-10.25,4.79l-64,176a8,8,0,0,0,4.79,10.26A8.14,8.14,0,0,0,96,224a8,8,0,0,0,7.52-5.27l64-176A8,8,0,0,0,162.73,32.48Z"
+                  ></path>
+                </svg>
+              </div>
+              <div class="flex flex-1 flex-col justify-center">
+                <p class="text-[#111418] text-base font-medium leading-normal">TensorFlow</p>
+                <p class="text-[#60758a] text-sm font-normal leading-normal">Python</p>
+                <p class="text-[#60758a] text-sm font-normal leading-normal">
+                  An open-source machine learning framework that facilitates research and production model deployment.
+                </p>
+              </div>
+            </div>
+            <div class="flex gap-4 bg-white px-4 py-3">
+              <div class="text-[#111418] flex items-center justify-center rounded-lg bg-[#f0f2f5] shrink-0 size-12" data-icon="Code" data-size="24px" data-weight="regular">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                  <path
+                    d="M69.12,94.15,28.5,128l40.62,33.85a8,8,0,1,1-10.24,12.29l-48-40a8,8,0,0,1,0-12.29l48-40a8,8,0,0,1,10.24,12.3Zm176,27.7-48-40a8,8,0,1,0-10.24,12.3L227.5,128l-40.62,33.85a8,8,0,1,0,10.24,12.29l48-40a8,8,0,0,0,0-12.29ZM162.73,32.48a8,8,0,0,0-10.25,4.79l-64,176a8,8,0,0,0,4.79,10.26A8.14,8.14,0,0,0,96,224a8,8,0,0,0,7.52-5.27l64-176A8,8,0,0,0,162.73,32.48Z"
+                  ></path>
+                </svg>
+              </div>
+              <div class="flex flex-1 flex-col justify-center">
+                <p class="text-[#111418] text-base font-medium leading-normal">PyTorch</p>
+                <p class="text-[#60758a] text-sm font-normal leading-normal">Python</p>
+                <p class="text-[#60758a] text-sm font-normal leading-normal">A flexible library for deep learning research, known for its dynamic computation graph.</p>
+              </div>
+            </div>
+            <h2 class="text-[#111418] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Libraries</h2>
+            <div class="flex gap-4 bg-white px-4 py-3">
+              <div class="text-[#111418] flex items-center justify-center rounded-lg bg-[#f0f2f5] shrink-0 size-12" data-icon="Code" data-size="24px" data-weight="regular">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                  <path
+                    d="M69.12,94.15,28.5,128l40.62,33.85a8,8,0,1,1-10.24,12.29l-48-40a8,8,0,0,1,0-12.29l48-40a8,8,0,0,1,10.24,12.3Zm176,27.7-48-40a8,8,0,1,0-10.24,12.3L227.5,128l-40.62,33.85a8,8,0,1,0,10.24,12.29l48-40a8,8,0,0,0,0-12.29ZM162.73,32.48a8,8,0,0,0-10.25,4.79l-64,176a8,8,0,0,0,4.79,10.26A8.14,8.14,0,0,0,96,224a8,8,0,0,0,7.52-5.27l64-176A8,8,0,0,0,162.73,32.48Z"
+                  ></path>
+                </svg>
+              </div>
+              <div class="flex flex-1 flex-col justify-center">
+                <p class="text-[#111418] text-base font-medium leading-normal">NumPy</p>
+                <p class="text-[#60758a] text-sm font-normal leading-normal">Python</p>
+                <p class="text-[#60758a] text-sm font-normal leading-normal">
+                  A library for numerical computing, essential for data manipulation and analysis in machine learning.
+                </p>
+              </div>
+            </div>
+            <div class="flex gap-4 bg-white px-4 py-3">
+              <div class="text-[#111418] flex items-center justify-center rounded-lg bg-[#f0f2f5] shrink-0 size-12" data-icon="Code" data-size="24px" data-weight="regular">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                  <path
+                    d="M69.12,94.15,28.5,128l40.62,33.85a8,8,0,1,1-10.24,12.29l-48-40a8,8,0,0,1,0-12.29l48-40a8,8,0,0,1,10.24,12.3Zm176,27.7-48-40a8,8,0,1,0-10.24,12.3L227.5,128l-40.62,33.85a8,8,0,1,0,10.24,12.29l48-40a8,8,0,0,0,0-12.29ZM162.73,32.48a8,8,0,0,0-10.25,4.79l-64,176a8,8,0,0,0,4.79,10.26A8.14,8.14,0,0,0,96,224a8,8,0,0,0,7.52-5.27l64-176A8,8,0,0,0,162.73,32.48Z"
+                  ></path>
+                </svg>
+              </div>
+              <div class="flex flex-1 flex-col justify-center">
+                <p class="text-[#111418] text-base font-medium leading-normal">Pandas</p>
+                <p class="text-[#60758a] text-sm font-normal leading-normal">Python</p>
+                <p class="text-[#60758a] text-sm font-normal leading-normal">
+                  A data manipulation and analysis library providing data structures like DataFrames for efficient data handling.
+                </p>
+              </div>
+            </div>
+            <div class="flex gap-4 bg-white px-4 py-3">
+              <div class="text-[#111418] flex items-center justify-center rounded-lg bg-[#f0f2f5] shrink-0 size-12" data-icon="Code" data-size="24px" data-weight="regular">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                  <path
+                    d="M69.12,94.15,28.5,128l40.62,33.85a8,8,0,1,1-10.24,12.29l-48-40a8,8,0,0,1,0-12.29l48-40a8,8,0,0,1,10.24,12.3Zm176,27.7-48-40a8,8,0,1,0-10.24,12.3L227.5,128l-40.62,33.85a8,8,0,1,0,10.24,12.29l48-40a8,8,0,0,0,0-12.29ZM162.73,32.48a8,8,0,0,0-10.25,4.79l-64,176a8,8,0,0,0,4.79,10.26A8.14,8.14,0,0,0,96,224a8,8,0,0,0,7.52-5.27l64-176A8,8,0,0,0,162.73,32.48Z"
+                  ></path>
+                </svg>
+              </div>
+              <div class="flex flex-1 flex-col justify-center">
+                <p class="text-[#111418] text-base font-medium leading-normal">Matplotlib</p>
+                <p class="text-[#60758a] text-sm font-normal leading-normal">Python</p>
+                <p class="text-[#60758a] text-sm font-normal leading-normal">
+                  A library for data visualization, enabling the creation of static, interactive, and animated visualizations.
+                </p>
+              </div>
+            </div>
+            <h2 class="text-[#111418] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Tools</h2>
+            <div class="flex gap-4 bg-white px-4 py-3">
+              <div class="text-[#111418] flex items-center justify-center rounded-lg bg-[#f0f2f5] shrink-0 size-12" data-icon="Globe" data-size="24px" data-weight="regular">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                  <path
+                    d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24ZM101.63,168h52.74C149,186.34,140,202.87,128,215.89,116,202.87,107,186.34,101.63,168ZM98,152a145.72,145.72,0,0,1,0-48h60a145.72,145.72,0,0,1,0,48ZM40,128a87.61,87.61,0,0,1,3.33-24H81.79a161.79,161.79,0,0,0,0,48H43.33A87.61,87.61,0,0,1,40,128ZM154.37,88H101.63C107,69.66,116,53.13,128,40.11,140,53.13,149,69.66,154.37,88Zm19.84,16h38.46a88.15,88.15,0,0,1,0,48H174.21a161.79,161.79,0,0,0,0-48Zm32.16-16H170.94a142.39,142.39,0,0,0-20.26-45A88.37,88.37,0,0,1,206.37,88ZM105.32,43A142.39,142.39,0,0,0,85.06,88H49.63A88.37,88.37,0,0,1,105.32,43ZM49.63,168H85.06a142.39,142.39,0,0,0,20.26,45A88.37,88.37,0,0,1,49.63,168Zm101.05,45a142.39,142.39,0,0,0,20.26-45h35.43A88.37,88.37,0,0,1,150.68,213Z"
+                  ></path>
+                </svg>
+              </div>
+              <div class="flex flex-1 flex-col justify-center">
+                <p class="text-[#111418] text-base font-medium leading-normal">Kaggle</p>
+                <p class="text-[#60758a] text-sm font-normal leading-normal">Web Application</p>
+                <p class="text-[#60758a] text-sm font-normal leading-normal">A platform for data science and machine learning, offering notebooks, code, and data management.</p>
+              </div>
+            </div>
+            <div class="flex gap-4 bg-white px-4 py-3">
+              <div class="text-[#111418] flex items-center justify-center rounded-lg bg-[#f0f2f5] shrink-0 size-12" data-icon="Code" data-size="24px" data-weight="regular">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                  <path
+                    d="M69.12,94.15,28.5,128l40.62,33.85a8,8,0,1,1-10.24,12.29l-48-40a8,8,0,0,1,0-12.29l48-40a8,8,0,0,1,10.24,12.3Zm176,27.7-48-40a8,8,0,1,0-10.24,12.3L227.5,128l-40.62,33.85a8,8,0,1,0,10.24,12.29l48-40a8,8,0,0,0,0-12.29ZM162.73,32.48a8,8,0,0,0-10.25,4.79l-64,176a8,8,0,0,0,4.79,10.26A8.14,8.14,0,0,0,96,224a8,8,0,0,0,7.52-5.27l64-176A8,8,0,0,0,162.73,32.48Z"
+                  ></path>
+                </svg>
+              </div>
+              <div class="flex flex-1 flex-col justify-center">
+                <p class="text-[#111418] text-base font-medium leading-normal">MLflow</p>
+                <p class="text-[#60758a] text-sm font-normal leading-normal">Python Package</p>
+                <p class="text-[#60758a] text-sm font-normal leading-normal">
+                  A tool for managing and tracking machine learning experiments, including metrics, parameters, and artifacts.
+                </p>
+              </div>
+            </div>
+            <div class="flex gap-4 bg-white px-4 py-3">
+              <div class="text-[#111418] flex items-center justify-center rounded-lg bg-[#f0f2f5] shrink-0 size-12" data-icon="Cloud" data-size="24px" data-weight="regular">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                  <path
+                    d="M160,40A88.09,88.09,0,0,0,81.29,88.67,64,64,0,1,0,72,216h88a88,88,0,0,0,0-176Zm0,160H72a48,48,0,0,1,0-96c1.1,0,2.2,0,3.29.11A88,88,0,0,0,72,128a8,8,0,0,0,16,0,72,72,0,1,1,72,72Z"
+                  ></path>
+                </svg>
+              </div>
+              <div class="flex flex-1 flex-col justify-center">
+                <p class="text-[#111418] text-base font-medium leading-normal">SageMaker</p>
+                <p class="text-[#60758a] text-sm font-normal leading-normal">Cloud Service</p>
+                <p class="text-[#60758a] text-sm font-normal leading-normal">
+                  A platform for deploying machine learning models, providing scalable and reliable inference services.
+                </p>
+              </div>
+            </div>
+            <h2 class="text-[#111418] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Resources</h2>
+            <div class="flex gap-4 bg-white px-4 py-3">
+              <div class="text-[#111418] flex items-center justify-center rounded-lg bg-[#f0f2f5] shrink-0 size-12" data-icon="Video" data-size="24px" data-weight="regular">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                  <path
+                    d="M164.44,105.34l-48-32A8,8,0,0,0,104,80v64a8,8,0,0,0,12.44,6.66l48-32a8,8,0,0,0,0-13.32ZM120,129.05V95l25.58,17ZM216,40H40A16,16,0,0,0,24,56V168a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,128H40V56H216V168Zm16,40a8,8,0,0,1-8,8H32a8,8,0,0,1,0-16H224A8,8,0,0,1,232,208Z"
+                  ></path>
+                </svg>
+              </div>
+              <div class="flex flex-1 flex-col justify-center">
+                <p class="text-[#111418] text-base font-medium leading-normal">Machine Learning by Andrew Ng</p>
+                <p class="text-[#60758a] text-sm font-normal leading-normal">Online Course</p>
+                <p class="text-[#60758a] text-sm font-normal leading-normal">
+                  A comprehensive online course covering various aspects of machine learning, from basics to advanced topics.
+                </p>
+              </div>
+            </div>
+            <div class="flex gap-4 bg-white px-4 py-3">
+              <div class="text-[#111418] flex items-center justify-center rounded-lg bg-[#f0f2f5] shrink-0 size-12" data-icon="Globe" data-size="24px" data-weight="regular">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                  <path
+                    d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24ZM101.63,168h52.74C149,186.34,140,202.87,128,215.89,116,202.87,107,186.34,101.63,168ZM98,152a145.72,145.72,0,0,1,0-48h60a145.72,145.72,0,0,1,0,48ZM40,128a87.61,87.61,0,0,1,3.33-24H81.79a161.79,161.79,0,0,0,0,48H43.33A87.61,87.61,0,0,1,40,128ZM154.37,88H101.63C107,69.66,116,53.13,128,40.11,140,53.13,149,69.66,154.37,88Zm19.84,16h38.46a88.15,88.15,0,0,1,0,48H174.21a161.79,161.79,0,0,0,0-48Zm32.16-16H170.94a142.39,142.39,0,0,0-20.26-45A88.37,88.37,0,0,1,206.37,88ZM105.32,43A142.39,142.39,0,0,0,85.06,88H49.63A88.37,88.37,0,0,1,105.32,43ZM49.63,168H85.06a142.39,142.39,0,0,0,20.26,45A88.37,88.37,0,0,1,49.63,168Zm101.05,45a142.39,142.39,0,0,0,20.26-45h35.43A88.37,88.37,0,0,1,150.68,213Z"
+                  ></path>
+                </svg>
+              </div>
+              <div class="flex flex-1 flex-col justify-center">
+                <p class="text-[#111418] text-base font-medium leading-normal">Towards Data Science</p>
+                <p class="text-[#60758a] text-sm font-normal leading-normal">Blog</p>
+                <p class="text-[#60758a] text-sm font-normal leading-normal">
+                  A blog featuring articles, tutorials, and news related to machine learning and artificial intelligence.
+                </p>
+              </div>
+            </div>
+            <div class="flex gap-4 bg-white px-4 py-3">
+              <div class="text-[#111418] flex items-center justify-center rounded-lg bg-[#f0f2f5] shrink-0 size-12" data-icon="Users" data-size="24px" data-weight="regular">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                  <path
+                    d="M117.25,157.92a60,60,0,1,0-66.5,0A95.83,95.83,0,0,0,3.53,195.63a8,8,0,1,0,13.4,8.74,80,80,0,0,1,134.14,0,8,8,0,0,0,13.4-8.74A95.83,95.83,0,0,0,117.25,157.92ZM40,108a44,44,0,1,1,44,44A44.05,44.05,0,0,1,40,108Zm210.14,98.7a8,8,0,0,1-11.07-2.33A79.83,79.83,0,0,0,172,168a8,8,0,0,1,0-16,44,44,0,1,0-16.34-84.87,8,8,0,1,1-5.94-14.85,60,60,0,0,1,55.53,105.64,95.83,95.83,0,0,1,47.22,37.71A8,8,0,0,1,250.14,206.7Z"
+                  ></path>
+                </svg>
+              </div>
+              <div class="flex flex-1 flex-col justify-center">
+                <p class="text-[#111418] text-base font-medium leading-normal">Data Science Central</p>
+                <p class="text-[#60758a] text-sm font-normal leading-normal">Community</p>
+                <p class="text-[#60758a] text-sm font-normal leading-normal">
+                  A community-driven platform for machine learning practitioners, offering discussions, resources, and job opportunities.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

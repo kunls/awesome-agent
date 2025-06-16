@@ -41,7 +41,7 @@ class GenerateAwesomeListResponse(BaseModel):
     model_used: str = Field(
         ...,
         description="实际使用的大语言模型",
-        example="gpt-3.5-turbo"
+        example="gpt-4-turbo"
     )
 
     class Config:
@@ -52,7 +52,7 @@ class GenerateAwesomeListResponse(BaseModel):
                 "keywords": ["Vue.js", "前端", "JavaScript", "组件化", "响应式"],
                 "total_results": 25,
                 "processing_time": 12.5,
-                "model_used": "gpt-3.5-turbo"
+                "model_used": "gpt-4-turbo"
             }
         }
 

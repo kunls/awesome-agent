@@ -67,11 +67,12 @@ class AwesomeListService(LoggerMixin):
             )
             
             # 第二步半：重排序优化
-            self.logger.info("步骤2.5: 应用Reranker RAG优化排序")
+            self.logger.info(f"步骤2.5: 应用Reranker RAG优化排序 (评分方法: {request.scoring_method})")
             search_results = await self.reranker_service.rerank_search_results(
                 search_results=search_results,
                 query=request.topic,
-                target_count=request.max_results
+                target_count=request.max_results,
+                scoring_method=request.scoring_method
             )
             
             # 如果搜索结果不足，使用扩展查询再次搜索
@@ -156,11 +157,12 @@ class AwesomeListService(LoggerMixin):
             )
             
             # 第一步半：智能重排序
-            self.logger.info("步骤1.5: 应用Reranker RAG智能优化")
+            self.logger.info(f"步骤1.5: 应用Reranker RAG智能优化 (评分方法: {request.scoring_method})")
             search_results = await self.reranker_service.rerank_search_results(
                 search_results=search_results,
                 query=request.topic,
-                target_count=request.max_results
+                target_count=request.max_results,
+                scoring_method=request.scoring_method
             )
             
             # 如果智能搜索结果不足，补充传统搜索
